@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Status dos Usuários</title>
+  <script src="{{ url_for('static', filename='socket.io.min.js') }}" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .online { color: green; }
+    .offline { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Status dos Usuários</h1>
+  <div>
+    <label for="username">Digite seu nome: </label>
+    <input type="text" id="username">
+    <button id="btnConectar">Conectar</button>
+  </div>
+  <hr>
+  <h2>Lista de Usuários</h2>
+  <ul id="listaUsuarios">
+  </ul>
+</body>
+</html>
