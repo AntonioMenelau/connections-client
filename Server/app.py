@@ -29,7 +29,7 @@ def atualizar_status(username, status):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute("UPDATE usuarios SET status = ? WHERE username = ?", (status, username))
-    if cursor.rowcount == 0:
+    if cursor.rowcount == 0 and username != None:
         cursor.execute("INSERT INTO usuarios (username, status) VALUES (?, ?)", (username, status))
     conn.commit()
     conn.close()
@@ -64,6 +64,11 @@ def handle_registrar_usuario(data):
     atualizar_status(username, 'online')
     print(f'Usuário {username} conectado com SID {request.sid}')
     usuarios_conectados[f"{request.sid}"] = username
+    usuarios = obter_usuarios()
+    socketio.emit('atualizar_lista', {'usuarios': usuarios})
+
+@socketio.on('carregarUsuarios')
+def handle_disconnect():
     usuarios = obter_usuarios()
     socketio.emit('atualizar_lista', {'usuarios': usuarios})
 

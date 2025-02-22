@@ -1,20 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const socket = io();
-  
-    let username = '';
-  
-    const btnConectar = document.getElementById('btnConectar');
-    const inputUsername = document.getElementById('username');
-    const listaUsuarios = document.getElementById('listaUsuarios');
-  
-    btnConectar.addEventListener('click', () => {
-      username = inputUsername.value.trim();
-      if (username) {
-        // Registra o usuário no servidor
-        socket.emit('registrar_usuario', { username: username });
-      }
-    });
-  
+    
     // Recebe atualizações da lista de usuários
     socket.on('atualizar_lista', (data) => {
       const usuarios = data.usuarios;
@@ -29,12 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         listaUsuarios.appendChild(li);
       });
     });
-  
-    // Quando o usuário fechar a página, avisa o servidor
-    window.addEventListener('beforeunload', () => {
-      if (username) {
-        socket.emit('usuario_desconectando', { username: username });
-      }
-    });
+
+    socket.emit('carregarUsuarios');
   });
   
