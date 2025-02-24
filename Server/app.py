@@ -19,25 +19,30 @@ def init_db():
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
+            info TEXT,
             status TEXT
         )
     ''')
     conn.commit()
     conn.close()
 
-def atualizar_status(username, status):
+def atualizar_status(username, status, info=any):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute("UPDATE usuarios SET status = ? WHERE username = ?", (status, username))
+    if info == any:
+        cursor.execute("UPDATE usuarios SET status = ? WHERE username = ?", (status, username))
+    else:
+        cursor.execute("UPDATE usuarios SET status = ?, info = ? WHERE username = ?", (status, info, username))
+    
     if cursor.rowcount == 0 and username != None:
-        cursor.execute("INSERT INTO usuarios (username, status) VALUES (?, ?)", (username, status))
+        cursor.execute("INSERT INTO usuarios (username, status, info) VALUES (?, ?, ?)", (username, status, info))
     conn.commit()
     conn.close()
 
 def obter_usuarios():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    cursor.execute("SELECT username, status FROM usuarios")
+    cursor.execute("SELECT username, status, info FROM usuarios")
     usuarios = cursor.fetchall()
     conn.close()
     return usuarios
@@ -59,9 +64,10 @@ def handle_connect():
 @socketio.on('registrar_usuario')
 def handle_registrar_usuario(data):
     username = data.get('username')
+    info = data.get('sistema_info_str')
     if not username:
         return
-    atualizar_status(username, 'online')
+    atualizar_status(username, 'online', info)
     print(f'Usuário {username} conectado com SID {request.sid}')
     usuarios_conectados[f"{request.sid}"] = username
     usuarios = obter_usuarios()
@@ -82,5 +88,4 @@ def handle_disconnect():
     pass
 
 if __name__ == '__main__':
-    # Use threading para rodar o SocketIO
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

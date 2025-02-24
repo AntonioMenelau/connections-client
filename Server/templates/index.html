@@ -5,15 +5,10 @@
   <title>Status dos Usuários</title>
   <script src="{{ url_for('static', filename='socket.io.min.js') }}" crossorigin="anonymous"></script>
   <script src="{{ url_for('static', filename='main.js') }}"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .online { color: green; }
-    .offline { color: red; }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>Lista de Usuários</h2>
-  <ul id="listaUsuarios">
-  </ul>
+<body class="bg-gray-100 p-6">
+  <h2 class="text-2xl font-bold mb-4">Lista de Usuários</h2>
+  <ul id="listaUsuarios" class="space-y-2"></ul>
 </body>
 </html>
