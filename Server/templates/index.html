@@ -1,14 +1,59 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Status dos Usuários</title>
-  <script src="{{ url_for('static', filename='socket.io.min.js') }}" crossorigin="anonymous"></script>
-  <script src="{{ url_for('static', filename='main.js') }}"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <title>Status dos Usuários</title>
+    <script src="{{ url_for('static', filename='main.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .canvas-container {
+            transition: transform 0.1s;
+            touch-action: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-6">
-  <h2 class="text-2xl font-bold mb-4">Lista de Usuários</h2>
-  <ul id="listaUsuarios" class="space-y-2"></ul>
+<body class="bg-gray-100">
+    <div class="flex gap-6 p-6 h-screen">
+        <!-- Lista de Usuários -->
+        <div class="w-1/5 flex flex-col">
+            <h2 class="text-2xl font-bold mb-4">Lista de Usuários</h2>
+            <input type="text" id="searchInput" placeholder="Pesquisar..." class="mb-4 p-2 border rounded">
+            <ul id="listaUsuarios" class="space-y-2 overflow-y-auto flex-1"></ul>
+        </div>
+
+        <!-- Área do Canvas -->
+        <div class="flex-1 relative overflow-hidden max-h-screen">
+          <h2 class="text-2xl font-bold mb-4">Canvas</h2>
+          <div id="canvasWrapper" class="relative h-full w-full overflow-hidden bg-white rounded-lg shadow-xl">
+            <div id="canvasContainer" class="canvas-container relative h-full w-full">
+              <div id="canvasArea" class="relative flex items-center justify-center h-full w-full overflow-y-auto">
+                <img src="{{ url_for('static', filename='imgs/tic.svg') }}" 
+                      class="p-10 min-h-screen object-contain" 
+                      alt="Descrição da imagem">
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Menu de contexto -->
+    <div id="contextMenu" class="hidden absolute bg-white shadow-lg rounded border border-gray-200">
+        <ul>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" id="deleteOption">Deletar</li>
+            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" id="infoOption">Mais Informações</li>
+        </ul>
+    </div>
+
+    <!-- Sidebar de informações -->
+    <div id="sidebar" class="hidden fixed right-0 top-0 h-full w-100 bg-white shadow-lg p-4 overflow-y-auto">
+        <h2 class="text-lg font-bold mb-4">Informações</h2>
+        <pre id="infoContent" class="whitespace-pre-wrap"></pre>
+        <button onclick="document.getElementById('sidebar').classList.add('hidden')" 
+                class="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded">
+            Fechar
+        </button>
+    </div>
 </body>
 </html>

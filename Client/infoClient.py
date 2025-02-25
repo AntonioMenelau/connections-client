@@ -10,7 +10,7 @@ import threading
 import json
 import sys 
 
-nome_arquivo = 'Client/config.json'
+nome_arquivo = 'config.json'
 with open(nome_arquivo, 'r', encoding="UTF-8") as arquivo:
     dados = json.load(arquivo)
 
@@ -36,9 +36,12 @@ def coletar_informacoes():
     
     info['Número de Núcleos'] = psutil.cpu_count(logical=True)
     info['Memória RAM (GB)'] = round(psutil.virtual_memory().total / (1024 ** 3), 2)
+
+    if dados["ramal"] != None:
+        info["Ramal Telefone"] = dados["ramal"]
     
     sistema_info_str = "\n".join([f"{k}: {v}" for k, v in info.items()])
-    return sistema_info_str, info['Nome do Computador'], info
+    return sistema_info_str, info['Nome do Usuário'], info
 
 sio = socketio.Client()
 
