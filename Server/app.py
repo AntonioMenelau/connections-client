@@ -2,10 +2,12 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, disconnect
 import sqlite3
 import threading
+from routes.list_route import list_bp
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'segredo123'
 socketio = SocketIO(app)
+app.register_blueprint(list_bp)
 
 DATABASE = 'usuarios.db'
 
@@ -26,16 +28,16 @@ def init_db():
     conn.commit()
     conn.close()
 
-def atualizar_status(username, status, info=any):
+def atualizar_status(username, status, info=None):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    if info == any:
+    if info is None:
         cursor.execute("UPDATE usuarios SET status = ? WHERE username = ?", (status, username))
     else:
         cursor.execute("UPDATE usuarios SET status = ?, info = ? WHERE username = ?", (status, info, username))
     
-    if cursor.rowcount == 0 and username != None:
-        cursor.execute("INSERT INTO usuarios (username, status, info) VALUES (?, ?, ?)", (username, status, info))
+    if cursor.rowcount == 0 and username is not None:
+        cursor.execute("INSERT INTO usuarios (username, status, info) VALUES (?, ?, ?)", (username, status, info if info is not None else ""))
     conn.commit()
     conn.close()
 
@@ -67,6 +69,8 @@ def handle_registrar_usuario(data):
     info = data.get('sistema_info_str')
     if not username:
         return
+    
+    # Atualizar status e info independente se é novo usuário ou reconexão
     atualizar_status(username, 'online', info)
     print(f'Usuário {username} conectado com SID {request.sid}')
     usuarios_conectados[f"{request.sid}"] = username

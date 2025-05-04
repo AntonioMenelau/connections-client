@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -14,44 +13,46 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="flex gap-6 p-6 h-screen">
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-100 min-h-screen">
+    <div class="flex gap-8 p-8 h-screen">
         <!-- Lista de Usuários -->
-        <div class="w-1/5 flex flex-col">
-            <h2 class="text-2xl font-bold mb-4">Lista de Usuários</h2>
-            <input type="text" id="searchInput" placeholder="Pesquisar..." class="mb-4 p-2 border rounded">
-            <ul id="listaUsuarios" class="space-y-2 overflow-y-auto flex-1"></ul>
+        <div class="w-1/5 flex flex-col bg-white rounded-2xl shadow-2xl p-6">
+            <h2 class="text-3xl font-extrabold mb-6 text-blue-700 tracking-tight border-b pb-2 border-blue-100">Usuários</h2>
+            <input type="text" id="searchInput" placeholder="Pesquisar..." class="mb-4 p-3 border-2 border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition">
+            <ul id="listaUsuarios" class="space-y-2 overflow-y-auto flex-1">
+                <!-- Itens da lista devem receber classes de hover no JS -->
+            </ul>
         </div>
 
         <!-- Área do Canvas -->
-        <div class="flex-1 relative overflow-hidden max-h-screen">
-          <h2 class="text-2xl font-bold mb-4">Canvas</h2>
-          <div id="canvasWrapper" class="relative h-full w-full overflow-hidden bg-white rounded-lg shadow-xl">
-            <div id="canvasContainer" class="canvas-container relative h-full w-full">
-              <div id="canvasArea" class="relative flex items-center justify-center h-full w-full overflow-y-auto">
-                <img src="{{ url_for('static', filename='imgs/tic.svg') }}" 
-                      class="p-10 min-h-screen object-contain" 
-                      alt="Descrição da imagem">
-              </div>
+        <div class="flex-1 relative overflow-hidden max-h-screen flex flex-col">
+            <h2 class="text-3xl font-extrabold mb-6 text-purple-700 tracking-tight border-b pb-2 border-purple-100">Canvas</h2>
+            <div id="canvasWrapper" class="relative flex-1 w-full overflow-hidden bg-white rounded-2xl shadow-2xl">
+                <div id="canvasContainer" class="canvas-container relative h-full w-full">
+                    <div id="canvasArea" class="relative flex items-center justify-center h-full w-full overflow-y-auto">
+                        <img src="{{ url_for('static', filename='imgs/tic.svg') }}" 
+                            class="p-10 min-h-screen object-contain" 
+                            alt="Descrição da imagem">
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
     </div>
 
     <!-- Menu de contexto -->
-    <div id="contextMenu" class="hidden absolute bg-white shadow-lg rounded border border-gray-200">
+    <div id="contextMenu" class="hidden absolute bg-white shadow-xl rounded-lg border border-gray-200 z-50">
         <ul>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" id="deleteOption">Deletar</li>
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" id="infoOption">Mais Informações</li>
+            <li class="px-6 py-3 hover:bg-red-100 text-red-600 font-semibold cursor-pointer transition" id="deleteOption">Deletar</li>
+            <li class="px-6 py-3 hover:bg-blue-100 text-blue-600 font-semibold cursor-pointer transition" id="infoOption">Mais Informações</li>
         </ul>
     </div>
 
     <!-- Sidebar de informações -->
-    <div id="sidebar" class="hidden fixed right-0 top-0 h-full w-100 bg-white shadow-lg p-4 overflow-y-auto">
-        <h2 class="text-lg font-bold mb-4">Informações</h2>
-        <pre id="infoContent" class="whitespace-pre-wrap"></pre>
+    <div id="sidebar" class="hidden fixed right-0 top-0 h-full w-96 bg-white shadow-2xl p-8 overflow-y-auto z-40 border-l border-blue-100">
+        <h2 class="text-2xl font-bold mb-4 text-blue-700">Informações</h2>
+        <pre id="infoContent" class="whitespace-pre-wrap text-gray-700"></pre>
         <button onclick="document.getElementById('sidebar').classList.add('hidden')" 
-                class="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded">
+                class="mt-6 px-6 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition">
             Fechar
         </button>
     </div>

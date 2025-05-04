@@ -69,6 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 element.className = `absolute cursor-pointer hover:shadow-lg p-2 rounded-full 
                                     flex items-center justify-center text-white font-bold text-[12px]
                                     ${usuario[1] === 'online' ? 'bg-green-500' : 'bg-red-500'}`;
+                element.dataset.info = usuario[2]; // <-- Atualiza as informações!
+                element.dataset.usuario = JSON.stringify(usuario); // <-- Atualiza o objeto completo!
             }
         });
     };

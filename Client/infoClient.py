@@ -8,11 +8,24 @@ import atexit
 import time
 import threading
 import json
-import sys 
+import sys
+import re  # Adicionado para regex
 
 nome_arquivo = 'config.json'
 with open(nome_arquivo, 'r', encoding="UTF-8") as arquivo:
     dados = json.load(arquivo)
+
+def get_anydesk_id():
+    try:
+        with open(r"C:\ProgramData\AnyDesk\service.conf", "r", encoding="utf-8") as f:
+            content = f.read()
+            # O ID geralmente aparece como "ad_id" ou "client_id"
+            match = re.search(r'last_cid=(\d+)', content)
+            if match:
+                return match.group(1)
+    except Exception as e:
+        return "Desconhecido"
+    return "Desconhecido"
 
 def coletar_informacoes():
     info = {}
@@ -39,6 +52,9 @@ def coletar_informacoes():
 
     if dados["ramal"] != None:
         info["Ramal Telefone"] = dados["ramal"]
+
+    # Adiciona o ID do AnyDesk
+    info["AnyDesk ID"] = get_anydesk_id()
     
     sistema_info_str = "\n".join([f"{k}: {v}" for k, v in info.items()])
     return sistema_info_str, info['Nome do Usuário'], info
@@ -56,11 +72,6 @@ def connect():
 def disconnect():
     print("Desconectado do servidor.")
 
-@sio.on('atualizar_lista')
-def on_atualizar_lista(data):
-    print("Lista de usuários atualizada:")
-    for usuario in data.get('usuarios', []):
-        print(usuario)
 
 def notificar_saida():
     try:
@@ -82,10 +93,12 @@ if __name__ == '__main__':
         sio.connect(dados["server"])
         t = threading.Thread(target=manter_conexao, daemon=True)
         t.start()
-        sio.wait()
-    except KeyboardInterrupt:
-        print("Encerrando a aplicação...")
-        sio.disconnect()
-        sys.exit(0)
+        while True:
+            try:
+                time.sleep(1)
+            except KeyboardInterrupt:
+                print("Encerrando a aplicação...")
+                sio.disconnect()
+                sys.exit(0)
     except Exception as e:
         print("Erro de conexão:", e)

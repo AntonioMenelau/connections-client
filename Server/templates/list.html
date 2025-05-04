@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Computadores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-100 min-h-screen">
+    <div class="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-2xl p-8">
+        <h2 class="text-3xl font-extrabold mb-6 text-blue-700 tracking-tight border-b pb-2 border-blue-100">Computadores</h2>
+        <div class="mb-4">
+            <input type="text" id="searchInput" 
+                class="w-full px-4 py-2 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                placeholder="Pesquisar computadores...">
+        </div>
+        <table class="min-w-full divide-y divide-blue-100">
+            <thead>
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Nome</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-blue-50" id="computerList">
+                {% for usuario in usuarios %}
+                <tr class="cursor-pointer hover:bg-blue-50 transition"
+                    data-info="{{ usuario[2]|e }}">
+                    <td class="px-6 py-4 whitespace-nowrap text-lg text-gray-700">{{ usuario[0] }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if usuario[1] == 'online' %}
+                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">Online</span>
+                        {% else %}
+                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-semibold">Offline</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl p-8 overflow-y-auto z-40 border-l border-blue-100 hidden transition-transform duration-300">
+        <button id="closeSidebar" class="mb-4 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg font-semibold transition">Fechar</button>
+        <h2 class="text-2xl font-bold mb-4 text-blue-700">Informações do Computador</h2>
+        <pre id="infoContent" class="whitespace-pre-wrap text-gray-700"></pre>
+    </div>
+
+    <script>
+        // Filtro de busca
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.getElementById('computerList').getElementsByTagName('tr');
+            for (let row of rows) {
+                let computerName = row.getElementsByTagName('td')[0].textContent;
+                row.style.display = computerName.toLowerCase().includes(filter) ? '' : 'none';
+            }
+        });
+
+        // Sidebar de informações
+        const sidebar = document.getElementById('sidebar');
+        const infoContent = document.getElementById('infoContent');
+        const closeSidebar = document.getElementById('closeSidebar');
+        document.querySelectorAll('#computerList tr').forEach(row => {
+            row.addEventListener('click', function() {
+                infoContent.textContent = this.dataset.info.replace(/\\n/g, '\n');
+                sidebar.classList.remove('hidden');
+            });
+        });
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
