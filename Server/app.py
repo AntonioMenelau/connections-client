@@ -2,16 +2,25 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, disconnect
 import sqlite3
 import threading
+from config import *
+
 from routes.list_route import list_bp
+from routes.principal import principal
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'segredo123'
 socketio = SocketIO(app)
-app.register_blueprint(list_bp)
 
-DATABASE = 'usuarios.db'
+
+# Importando as rotas
+app.register_blueprint(list_bp)
+app.register_blueprint(principal)
+
 
 usuarios_conectados = {}
+
+
+
 
 # Funções para manipulação do banco SQLite
 def init_db():
@@ -50,14 +59,8 @@ def obter_usuarios():
     return usuarios
 
 # Inicializa o banco de dados ao iniciar a aplicação
-init_db()
 
 
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 @socketio.on('connect')
 def handle_connect():
@@ -91,5 +94,8 @@ def handle_disconnect():
     socketio.emit('atualizar_lista', {'usuarios': usuarios})
     pass
 
+
+
 if __name__ == '__main__':
+    init_db()
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
+</head>
+<body class="h-full bg-gradient-to-br from-blue-50 via-white to-purple-100 flex flex-col">
+    <!-- Menu Superior -->
+    <nav class="bg-white shadow-md px-8 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <a href="{{ url_for('index') }}"
+               class="text-lg font-bold text-blue-700 hover:text-blue-900 transition">Status</a>
+            <a href="{{ url_for('list.list_users') }}"
+               class="text-lg font-bold text-purple-700 hover:text-purple-900 transition">Lista de Computadores</a>
+        </div>
+    </nav>
+    
+    <main class="flex-1 overflow-hidden">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

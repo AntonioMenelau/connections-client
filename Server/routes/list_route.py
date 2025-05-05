@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template
 import sqlite3
-
-DATABASE = 'usuarios.db'
+from config import *
 
 list_bp = Blueprint('list', __name__)
 
