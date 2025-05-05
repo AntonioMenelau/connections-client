@@ -35,6 +35,41 @@ def init_admin_db():
     conn.commit()
     conn.close()
 
+def init_canvas_db():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS canvas_positions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            canvas_id TEXT,
+            position_x FLOAT,
+            position_y FLOAT,
+            UNIQUE(username, canvas_id)
+        )
+    ''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS canvas_layouts (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            image_path TEXT
+        )
+    ''')
+    
+    # Insert default layouts
+    default_layouts = [
+        ('layout1', 'TI Central', 'imgs/tic.svg'),
+        ('layout2', 'Primeiro Andar', 'imgs/floor1.svg'),
+        ('layout3', 'Segundo Andar', 'imgs/floor2.svg')
+    ]
+    cursor.executemany(
+        'INSERT OR IGNORE INTO canvas_layouts (id, name, image_path) VALUES (?, ?, ?)',
+        default_layouts
+    )
+    conn.commit()
+    conn.close()
+
 def atualizar_status(username, status, info=None):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()

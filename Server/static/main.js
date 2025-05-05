@@ -5,6 +5,7 @@ let translateX = 0, translateY = 0;
 const canvasElements = new Map();
 const canvasContainer = document.getElementById('canvasContainer');
 let locEquipamentos = {};
+let currentLayout = 'layout1';
 
 document.addEventListener('DOMContentLoaded', () => {
     const socket = io();
@@ -105,6 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     
         element.addEventListener('contextmenu', handleContextMenu);
+
+        element.addEventListener('mouseup', () => {
+            const rect = element.getBoundingClientRect();
+            const canvasRect = canvasArea.getBoundingClientRect();
+            const newX = rect.left - canvasRect.left;
+            const newY = rect.top - canvasRect.top;
+            savePosition(usuario[0], newX, newY);
+        });
     
         canvasArea.appendChild(element);
         canvasElements.set(usuario[0], element);
@@ -153,6 +162,68 @@ document.addEventListener('DOMContentLoaded', () => {
         locEquipamentos[usuario[0]] = {usuario, x, y};
     });
 
+    // Carregar layouts disponíveis
+    const loadLayouts = async () => {
+        const response = await fetch('/api/canvas/layouts');
+        const layouts = await response.json();
+        const selector = document.getElementById('layoutSelector');
+        
+        layouts.forEach(layout => {
+            const option = document.createElement('option');
+            option.value = layout.id;
+            option.textContent = layout.name;
+            selector.appendChild(option);
+        });
+        
+        selector.value = currentLayout;
+    };
+
+    // Carregar posições do layout atual
+    const loadPositions = async () => {
+        const response = await fetch(`/api/canvas/${currentLayout}/positions`);
+        const data = await response.json();
+        
+        // Limpar canvas atual
+        canvasElements.forEach(element => element.remove());
+        canvasElements.clear();
+        
+        // Recriar elementos com posições salvas
+        data.positions.forEach(pos => {
+            const usuario = Array.from(usuarios).find(u => u[0] === pos.username);
+            if (usuario) {
+                createCanvasElement(usuario, pos.x, pos.y);
+            }
+        });
+    };
+
+    // Salvar posição de um elemento
+    const savePosition = async (username, x, y) => {
+        await fetch('/api/canvas/position', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                canvas_id: currentLayout,
+                x,
+                y
+            })
+        });
+    };
+
+    // Trocar de layout
+    document.getElementById('layoutSelector').addEventListener('change', async (e) => {
+        currentLayout = e.target.value;
+        const layouts = await fetch('/api/canvas/layouts').then(r => r.json());
+        const layout = layouts.find(l => l.id === currentLayout);
+        
+        // Atualizar imagem
+        document.querySelector('#canvasArea img').src = layout.image;
+        
+        // Carregar novas posições
+        loadPositions();
+    });
 
     // Context menu handlers
     document.getElementById('deleteOption').addEventListener('click', () => {
@@ -177,6 +248,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('contextMenu').classList.add('hidden');
         }
     });
+
+    // Inicialização
+    loadLayouts();
+    loadPositions();
 
     socket.emit('carregarUsuarios');
 });
