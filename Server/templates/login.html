@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Login Administrativo{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl w-96">
+        <h2 class="text-3xl font-bold mb-6 text-blue-700">Login</h2>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 mb-2">Usuário</label>
+                <input type="text" name="username" 
+                       class="w-full p-3 border-2 border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition">
+            </div>
+            <div>
+                <label class="block text-gray-700 mb-2">Senha</label>
+                <input type="password" name="password"
+                       class="w-full p-3 border-2 border-blue-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition">
+            </div>
+            <button type="submit" 
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                Entrar
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
