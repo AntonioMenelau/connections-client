@@ -1,6 +1,7 @@
 import sqlite3
 import threading
 from config import *
+import hashlib
 
 # Funções para manipulação do banco SQLite
 def init_db():
@@ -14,6 +15,23 @@ def init_db():
             status TEXT
         )
     ''')
+    conn.commit()
+    conn.close()
+
+def init_admin_db():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS admin (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+    # Create default admin user (username: admin, password: admin123)
+    default_password = hashlib.sha256('admin123'.encode()).hexdigest()
+    cursor.execute('INSERT OR IGNORE INTO admin (username, password) VALUES (?, ?)', 
+                  ('admin', default_password))
     conn.commit()
     conn.close()
 

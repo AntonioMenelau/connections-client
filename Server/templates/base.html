@@ -10,11 +10,19 @@
     <!-- Menu Superior -->
     <nav class="bg-white shadow-md px-8 py-4 flex items-center justify-between">
         <div class="flex items-center gap-8">
-            <a href="{{ url_for('index') }}"
-               class="text-lg font-bold text-blue-700 hover:text-blue-900 transition">Status</a>
+            <a href="{{ url_for('login.index') }}"
+               class="text-lg font-bold text-blue-700 hover:text-blue-900 transition">Canvas</a>
             <a href="{{ url_for('list.list_users') }}"
                class="text-lg font-bold text-purple-700 hover:text-purple-900 transition">Lista de Computadores</a>
         </div>
+        
+        <!-- Logout Button -->
+        {% if session.get('admin') %}
+        <a href="{{ url_for('login.logout') }}" 
+           class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-semibold transition-colors">
+            Sair
+        </a>
+        {% endif %}
     </nav>
     
     <main class="flex-1 overflow-hidden">
